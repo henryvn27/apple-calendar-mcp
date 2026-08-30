@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JSON metadata
+        run: |
+          python3 -m json.tool .agents/plugins/marketplace.json >/dev/null
+          python3 -m json.tool plugins/apple-calendar/.codex-plugin/plugin.json >/dev/null
+          python3 -m json.tool plugins/apple-calendar/.mcp.json >/dev/null
+      - name: Test MCP server
+        run: python3 -m unittest discover -s plugins/apple-calendar/tests -v
+      - name: Compile bridges
+        run: |
+          python3 -m py_compile plugins/apple-calendar/server.py
+          osacompile -l JavaScript -o /tmp/apple-calendar.scpt plugins/apple-calendar/calendar.js

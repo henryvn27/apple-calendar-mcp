@@ -1,0 +1,20 @@
+{
+  "name": "apple-calendar-mcp",
+  "interface": {
+    "displayName": "Apple Calendar MCP"
+  },
+  "plugins": [
+    {
+      "name": "apple-calendar",
+      "source": {
+        "source": "local",
+        "path": "./plugins/apple-calendar"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
