@@ -299,6 +299,31 @@ class JavaScriptBridgeTests(unittest.TestCase):
             {"inside": True, "starts_at_end": False, "ends_at_start": False, "spans": True},
         )
 
+    def test_calendar_dates_are_read_in_bulk(self):
+        result = self.run_bridge_harness(
+            "(() => {"
+            "let eventReads = 0; let startReads = 0; let endReads = 0;"
+            "const collection = () => { eventReads += 1; return [{id: 1}, {id: 2}]; };"
+            "collection.startDate = () => { startReads += 1; return ["
+            "new Date('2026-09-01T13:00:00Z'), new Date('2026-09-02T13:00:00Z')]; };"
+            "collection.endDate = () => { endReads += 1; return ["
+            "new Date('2026-09-01T14:00:00Z'), new Date('2026-09-02T14:00:00Z')]; };"
+            "const records = calendarEventsWithDates({events: collection});"
+            "return {event_reads: eventReads, start_reads: startReads, end_reads: endReads,"
+            "count: records.length, first_id: records[0].event.id};"
+            "})()"
+        )
+        self.assertEqual(
+            result,
+            {
+                "event_reads": 1,
+                "start_reads": 1,
+                "end_reads": 1,
+                "count": 2,
+                "first_id": 1,
+            },
+        )
+
     def test_edit_safety_blocks_recurring_and_invited_events(self):
         result = self.run_bridge_harness(
             "(() => {"
