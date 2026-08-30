@@ -210,9 +210,30 @@ function listCalendars(calendarApp) {
 }
 
 function eventOverlapsRange(event, rangeStart, rangeEnd) {
-  const eventStart = new Date(event.startDate()).getTime();
-  const eventEnd = new Date(event.endDate()).getTime();
+  return datesOverlapRange(
+    event.startDate(),
+    event.endDate(),
+    rangeStart,
+    rangeEnd,
+  );
+}
+
+function datesOverlapRange(start, end, rangeStart, rangeEnd) {
+  const eventStart = new Date(start).getTime();
+  const eventEnd = new Date(end).getTime();
   return eventStart < rangeEnd.getTime() && eventEnd > rangeStart.getTime();
+}
+
+function calendarEventsWithDates(calendar) {
+  const events = calendar.events();
+  const starts = calendar.events.startDate();
+  const ends = calendar.events.endDate();
+  const count = Math.min(events.length, starts.length, ends.length);
+  const records = [];
+  for (let index = 0; index < count; index += 1) {
+    records.push({ event: events[index], start: starts[index], end: ends[index] });
+  }
+  return records;
 }
 
 function searchEvents(calendarApp, input) {
@@ -226,9 +247,9 @@ function searchEvents(calendarApp, input) {
   const skippedCalendars = [];
 
   for (const calendar of calendars) {
-    let events;
+    let records;
     try {
-      events = calendar.events();
+      records = calendarEventsWithDates(calendar);
     } catch (error) {
       skippedCalendars.push({
         id: safe(() => calendarId(calendar), null),
@@ -236,8 +257,9 @@ function searchEvents(calendarApp, input) {
       });
       continue;
     }
-    for (const event of events) {
-      if (!eventOverlapsRange(event, rangeStart, rangeEnd)) continue;
+    for (const record of records) {
+      if (!datesOverlapRange(record.start, record.end, rangeStart, rangeEnd)) continue;
+      const event = record.event;
       if (query) {
         const haystack = [
           text(safe(() => event.summary(), "")),
@@ -249,7 +271,7 @@ function searchEvents(calendarApp, input) {
       matches.push({
         event,
         calendar,
-        sort: new Date(event.startDate()).getTime(),
+        sort: new Date(record.start).getTime(),
       });
     }
   }
