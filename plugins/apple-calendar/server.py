@@ -10,7 +10,7 @@ from urllib.parse import urlsplit
 
 
 PROTOCOL_VERSION = "2025-06-18"
-SERVER_VERSION = "0.1.0"
+SERVER_VERSION = "0.1.1"
 BRIDGE = Path(__file__).with_name("calendar.js")
 
 

@@ -1,6 +1,6 @@
 {
   "name": "apple-calendar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read and manage native Apple Calendar from Codex or ChatGPT.",
   "author": {
     "name": "Henry Van Ness"

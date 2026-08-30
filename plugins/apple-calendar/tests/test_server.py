@@ -168,7 +168,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(
             initialized["result"]["protocolVersion"], server.PROTOCOL_VERSION
         )
-        self.assertEqual(initialized["result"]["serverInfo"]["version"], "0.1.0")
+        self.assertEqual(initialized["result"]["serverInfo"]["version"], "0.1.1")
 
         listed = server.handle_message(
             {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}
